@@ -37,7 +37,7 @@
   <title>Self-Employed &amp; Small Business Health Insurance | BrightBloom Health</title>
   <meta name="description" content="Compare affordable small business health insurance plans for your company or self-employed business. BrightBloom Health serves clients in 31 states with personalized guidance." />
   <link rel="icon" sizes="192x192" href="https://static.wixstatic.com/media/b63b52_3098d8e9bc4a4a759e5c3618f8b5f207%7Emv2.png/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/b63b52_3098d8e9bc4a4a759e5c3618f8b5f207%7Emv2.png" type="image/png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20261117-2" />
 </head>
 <body>
 
@@ -445,7 +445,7 @@
       <div class="container">
         <div class="question-card">
           <div class="question-card__header">
-            <span class="question-card__eyebrow">Quick Question?</span>
+            <span class="question-card__eyebrow">🌻 Quick Question?</span>
             <h2 class="question-card__title">Not Ready to Book? Ask a Question</h2>
             <p class="question-card__subtitle">
               Send your question directly to Nicole and our licensed advisory team. We'll get back to you promptly with clear, no-pressure answers.
@@ -455,7 +455,7 @@
           <form id="ask-question-form" class="question-form" action="/api/ask-question" method="POST">
             <input type="hidden" name="page_name" value="Small Business Group Plans" />
             <input type="hidden" name="page_slug" value="small-business-group-plans" />
-            <div class="form-honeypot" aria-hidden="true">
+            <div class="form-honeypot" aria-hidden="true" style="display:none;">
               <label for="aq-website">Website</label>
               <input type="text" id="aq-website" name="website" tabindex="-1" autocomplete="off" />
             </div>
@@ -529,7 +529,10 @@
 
             <div class="form-actions">
               <button type="submit" id="aq-submit-btn" class="form-submit-btn">
-                Send Question
+                <span id="aq-submit-label">Send Question</span>
+                <svg viewBox="0 0 200 200" aria-hidden="true">
+                  <path d="m178.803 97.137-50.078-49.485a3.99 3.99 0 0 0-5.657.047 4.03 4.03 0 0 0 .047 5.68l43.114 42.604H24c-2.209 0-4 1.798-4 4.017s1.791 4.016 4 4.016h142.232l-43.117 42.606a4.03 4.03 0 0 0-.047 5.68 3.99 3.99 0 0 0 5.657.047l50.078-49.485a4.027 4.027 0 0 0 0-5.727"></path>
+                </svg>
               </button>
               <p class="form-privacy-note">
                 🔒 Your information goes directly to BrightBloom Health and is never sold to third-party lead brokers.
@@ -544,6 +547,7 @@
         var form = document.getElementById('ask-question-form');
         var statusEl = document.getElementById('aq-status');
         var submitBtn = document.getElementById('aq-submit-btn');
+        var submitLabel = document.getElementById('aq-submit-label');
         if (!form) return;
 
         form.addEventListener('submit', function(e) {
@@ -551,8 +555,8 @@
           statusEl.className = 'form-status';
           statusEl.textContent = '';
           submitBtn.disabled = true;
-          var originalText = submitBtn.textContent;
-          submitBtn.textContent = 'Sending...';
+          var originalText = submitLabel ? submitLabel.textContent : 'Send Question';
+          if (submitLabel) submitLabel.textContent = 'Sending...';
 
           var formData = new FormData(form);
           var payload = {
@@ -594,7 +598,7 @@
           })
           .finally(function() {
             submitBtn.disabled = false;
-            submitBtn.textContent = originalText;
+            if (submitLabel) submitLabel.textContent = originalText;
           });
         });
       })();

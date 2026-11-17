@@ -361,6 +361,168 @@
         </div>
       </div>
     </section>
+
+    <!-- ======================================================================
+         SECTION 9: NOT READY TO BOOK? ASK A QUESTION FORM
+         ====================================================================== -->
+    <section id="ask-question" class="question-section">
+      <div class="container">
+        <div class="question-card">
+          <div class="question-card__header">
+            <span class="question-card__eyebrow">Quick Question?</span>
+            <h2 class="question-card__title">Not Ready to Book? Ask a Question</h2>
+            <p class="question-card__subtitle">
+              Send your question directly to Nicole and our licensed advisory team. We'll get back to you promptly with clear, no-pressure answers.
+            </p>
+          </div>
+
+          <form id="ask-question-form" class="question-form" action="/api/ask-question" method="POST">
+            <input type="hidden" name="page_name" value="Individual Health Insurance Plans" />
+            <input type="hidden" name="page_slug" value="individual-health-insurance" />
+            <div class="form-honeypot" aria-hidden="true">
+              <label for="aq-website">Website</label>
+              <input type="text" id="aq-website" name="website" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="aq-first-name">First Name <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="aq-first-name"
+                  name="first_name"
+                  class="form-input"
+                  placeholder="Jane"
+                  autocomplete="given-name"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="aq-last-name">Last Name <span class="required">*</span></label>
+                <input
+                  type="text"
+                  id="aq-last-name"
+                  name="last_name"
+                  class="form-input"
+                  placeholder="Doe"
+                  autocomplete="family-name"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="aq-email">Email <span class="required">*</span></label>
+                <input
+                  type="email"
+                  id="aq-email"
+                  name="email"
+                  class="form-input"
+                  placeholder="jane@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="aq-phone">Phone Number <span class="required">*</span></label>
+                <input
+                  type="tel"
+                  id="aq-phone"
+                  name="phone"
+                  class="form-input"
+                  placeholder="(555) 123-4567"
+                  autocomplete="tel"
+                  required
+                />
+              </div>
+
+              <div class="form-group form-group--full">
+                <label for="aq-question">How Can We Help? <span class="required">*</span></label>
+                <textarea
+                  id="aq-question"
+                  name="question"
+                  class="form-textarea"
+                  placeholder="Tell us a little about what you're looking for or ask any question about individual &amp; family health coverage..."
+                  required
+                ></textarea>
+              </div>
+            </div>
+
+            <div id="aq-status" class="form-status" role="status" aria-live="polite"></div>
+
+            <div class="form-actions">
+              <button type="submit" id="aq-submit-btn" class="form-submit-btn">
+                Send Question
+              </button>
+              <p class="form-privacy-note">
+                🔒 Your information goes directly to BrightBloom Health and is never sold to third-party lead brokers.
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+    <script>
+      (function() {
+        var form = document.getElementById('ask-question-form');
+        var statusEl = document.getElementById('aq-status');
+        var submitBtn = document.getElementById('aq-submit-btn');
+        if (!form) return;
+
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          statusEl.className = 'form-status';
+          statusEl.textContent = '';
+          submitBtn.disabled = true;
+          var originalText = submitBtn.textContent;
+          submitBtn.textContent = 'Sending...';
+
+          var formData = new FormData(form);
+          var payload = {
+            first_name: (formData.get('first_name') || '').toString().trim(),
+            last_name: (formData.get('last_name') || '').toString().trim(),
+            email: (formData.get('email') || '').toString().trim(),
+            phone: (formData.get('phone') || '').toString().trim(),
+            question: (formData.get('question') || '').toString().trim(),
+            page_name: (formData.get('page_name') || 'Individual Health Insurance Plans').toString().trim(),
+            page_slug: (formData.get('page_slug') || 'individual-health-insurance').toString().trim(),
+            page_url: window.location.href,
+            website: (formData.get('website') || '').toString().trim()
+          };
+
+          fetch('/api/ask-question', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          })
+          .then(function(res) {
+            return res.json().catch(function() { return {}; }).then(function(data) {
+              return { ok: res.ok, data: data };
+            });
+          })
+          .then(function(result) {
+            if (result.ok && result.data && result.data.ok) {
+              statusEl.className = 'form-status form-status--success';
+              statusEl.textContent = 'Thank you! Your question has been sent to Nicole at BrightBloom Health. We will be in touch shortly.';
+              form.reset();
+            } else {
+              var msg = (result.data && result.data.error) ? result.data.error : 'We could not send your message right now. Please call us at (656) 244-2777 or email Nicole@brightbloomhealth.com.';
+              statusEl.className = 'form-status form-status--error';
+              statusEl.textContent = msg;
+            }
+          })
+          .catch(function() {
+            statusEl.className = 'form-status form-status--error';
+            statusEl.textContent = 'Network error while sending your question. Please call (656) 244-2777 or email Nicole@brightbloomhealth.com.';
+          })
+          .finally(function() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          });
+        });
+      })();
+    </script>
   </main>
 
   <!-- ========================================================================

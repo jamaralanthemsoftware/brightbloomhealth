@@ -127,7 +127,7 @@ def build_email_bodies(lead: dict) -> tuple[str, str, str]:
 
 def send_via_postmark(cfg: dict, lead: dict) -> None:
     token = cfg["POSTMARK_SERVER_TOKEN"]
-    from_email = cfg.get("FROM_EMAIL", "nicole@brightbloomhealth.com")
+    from_email = cfg.get("FROM_EMAIL", "no-reply@brightbloomhealth.com")
     to_email = cfg.get("TO_EMAIL", "nicole@brightbloomhealth.com")
     subject, text_body, html_body = build_email_bodies(lead)
 
@@ -163,7 +163,7 @@ def send_via_smtp(cfg: dict, lead: dict) -> None:
     port = int(cfg.get("SMTP_PORT", "587"))
     user = cfg.get("SMTP_USER", "")
     password = cfg.get("SMTP_PASS", "")
-    from_email = cfg.get("FROM_EMAIL", user or "nicole@brightbloomhealth.com")
+    from_email = cfg.get("FROM_EMAIL", user or "no-reply@brightbloomhealth.com")
     to_email = cfg.get("TO_EMAIL", "nicole@brightbloomhealth.com")
     subject, text_body, html_body = build_email_bodies(lead)
 

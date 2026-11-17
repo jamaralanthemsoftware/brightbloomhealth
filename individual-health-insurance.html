@@ -507,6 +507,13 @@
           })
           .then(function(result) {
             if (result.ok && result.data && result.data.ok) {
+              if (typeof gtag === 'function') {
+                gtag('event', 'conversion', {
+                  'send_to': 'AW-18540494962/2FZoCJnIu7odEPKA5ohF',
+                  'value': 1.0,
+                  'currency': 'USD'
+                });
+              }
               statusEl.className = 'form-status form-status--success';
               statusEl.textContent = 'Thank you! Your question has been sent to Nicole at BrightBloom Health. We will be in touch shortly.';
               form.reset();
